@@ -3,117 +3,152 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Md Shop - Order Checkout</title>
+    <title>Md Shop - MAR Mouth Chill</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8f9fa; display: flex; justify-content: center; padding: 20px; }
-        .checkout-card { width: 100%; max-width: 450px; background: white; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); padding: 20px; text-align: center; }
-        
-        .header-icon { width: 50px; margin-bottom: 10px; }
-        h2 { color: #333; margin-bottom: 20px; }
+        :root { --primary: #25D366; --secondary: #28a745; --danger: #dc3545; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; padding: 20px; margin: 0; }
+        .container { width: 100%; max-width: 450px; background: white; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); overflow: hidden; }
+        .step { display: none; padding: 25px; animation: fadeIn 0.5s; }
+        .active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Payment Summary Box */
-        .payment-box { background: #fff; border: 1px solid #eee; border-radius: 15px; padding: 15px; margin-bottom: 20px; text-align: left; }
-        .row { display: flex; justify-content: space-between; margin: 8px 0; color: #555; }
-        .total-row { border-top: 1px solid #eee; padding-top: 10px; font-weight: bold; font-size: 1.2em; color: #000; }
+        /* Page 1 Styles */
+        .welcome-hero { text-align: center; }
+        .product-img { width: 100%; border-radius: 15px; margin: 15px 0; border: 2px solid #eee; }
+        .price-tag { font-size: 1.4em; color: var(--secondary); font-weight: bold; margin: 10px 0; }
 
-        /* Product Box */
-        .product-container { border: 2px solid #28a745; border-radius: 15px; padding: 15px; margin-bottom: 20px; }
-        .product-title { color: #28a745; font-weight: bold; margin-bottom: 10px; }
-        .product-img { width: 100%; border-radius: 10px; }
+        /* Page 2 Styles (Form) */
+        input, select { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
 
-        /* Important Note Box */
-        .note-box { border: 2px dashed #dc3545; border-radius: 15px; padding: 15px; background-color: #fff5f5; color: #856404; font-size: 0.9em; line-height: 1.6; }
+        /* Page 3 Styles (Payment) */
+        .payment-box { background: #f8f9fa; border: 1px solid #eee; border-radius: 15px; padding: 15px; margin-bottom: 20px; text-align: left; }
+        .row { display: flex; justify-content: space-between; margin: 8px 0; }
+        .total-row { border-top: 2px solid #ddd; padding-top: 10px; font-weight: bold; font-size: 1.2em; }
+        .note-box { border: 2px dashed var(--danger); border-radius: 12px; padding: 15px; background: #fff5f5; font-size: 0.9em; margin-bottom: 20px; }
 
-        /* Form Inputs */
-        input, select { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
-        .order-btn { background-color: #25D366; color: white; border: none; padding: 15px; width: 100%; border-radius: 10px; font-size: 1.1em; font-weight: bold; cursor: pointer; margin-top: 20px; }
+        /* Buttons */
+        .btn { width: 100%; padding: 15px; border-radius: 10px; border: none; font-size: 1.1em; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 10px; }
+        .btn-next { background: var(--primary); color: white; }
+        .btn-back { background: #eee; color: #666; margin-top: 5px; }
+        h2 { margin-top: 0; color: #333; }
     </style>
 </head>
 <body>
 
-<div class="checkout-card">
-    <img src="https://cdn-icons-png.flaticon.com/512/633/633611.png" class="header-icon" alt="card">
-    <h2>Payment Details</h2>
-
-    <div class="payment-box">
-        <div class="row">
-            <span>Product (₹50 x <span id="qtyLabel">1</span>):</span>
-            <span>₹<span id="prodTotal">50</span></span>
-        </div>
-        <div class="row">
-            <span>Courier Charges:</span>
-            <span>₹<span id="courierLabel">60</span></span>
-        </div>
-        <div class="total-row row">
-            <span>Total Amount:</span>
-            <span>₹<span id="finalTotal">110</span></span>
-        </div>
-    </div>
-
-    <input type="text" id="name" placeholder="Name">
-    <input type="text" id="address" placeholder="Address">
-    <input type="text" id="landmark" placeholder="Landmark">
-    <input type="number" id="pincode" placeholder="Pincode">
+<div class="container">
     
-    <select id="state" onchange="updatePrice()">
-        <option value="Tamilnadu">Tamilnadu</option>
-        <option value="Other State">Other State</option>
-    </select>
-
-    <input type="tel" id="mobile" placeholder="Mobile Number">
-    <input type="tel" id="altMobile" placeholder="Alt Mobile Number">
-    
-    <label style="display:block; text-align:left; font-weight:bold; margin-top:10px;">Quantity:</label>
-    <input type="number" id="quantity" value="1" min="1" oninput="updatePrice()">
-
-    <div class="product-container">
-        <div class="product-title">MAR MOUTH CHILL:</div>
-        <img src="https://drive.google.com/file/d/1tN6yf9RvKK7ClMlFwKgq-m-WkhVQE_kt/view?usp=drivesdk" class="product-img" alt="MAR Mouth Chill">
+    <div id="step1" class="step active welcome-hero">
+        <span>🛍️</span>
+        <h2>Welcome to Our Shop</h2>
+        <div style="border: 2px solid var(--secondary); border-radius: 15px; padding: 10px;">
+            <h3 style="color: var(--secondary); margin: 5px;">MAR MOUTH CHILL</h3>
+            <img src="YOUR_GOOGLE_DRIVE_PIC_LINK_HERE" class="product-img" alt="Product Image">
+            <p class="price-tag">Price: ₹50 per piece</p>
+            <p style="color: #666;">(Minimum 5 Pcs Order Required)</p>
+            <p>📦 <i>+ Courier Charges Add Next</i></p>
+        </div>
+        <button class="btn btn-next" onclick="nextStep(2)">Order Now ➔</button>
     </div>
 
-    <div class="note-box">
-        ⚠️ <b>கவனிக்கவும், Important:</b> 1 Pouch Is 50 Rs. Minimum 5 Pcs order. Full box 1200. One box in 24 pcs... (1 pouch la 20 pillows) Available... 📦 💸 <br><br>
-        <b>NO CASH ON DELIVERY 💸 ONLINE PAYMENT ONLY</b> 🚚 Product dispatch date to Delivery 2 or 3 days.
+    <div id="step2" class="step">
+        <h2>🚚 Delivery Details</h2>
+        <input type="text" id="name" placeholder="Full Name">
+        <input type="text" id="address" placeholder="Door No, Street Name">
+        <input type="text" id="landmark" placeholder="Landmark">
+        <input type="number" id="pincode" placeholder="Pincode">
+        
+        <label>Select State (For Courier Calculation):</label>
+        <select id="state" onchange="calculate()">
+            <option value="Tamilnadu">Tamilnadu (₹60)</option>
+            <option value="Other State">Other State (₹80)</option>
+        </select>
+
+        <input type="tel" id="mobile" placeholder="Mobile Number">
+        <input type="tel" id="altMobile" placeholder="Alt Mobile Number (Optional)">
+        
+        <label>Quantity (Min. 5):</label>
+        <input type="number" id="quantity" value="5" min="5" oninput="calculate()">
+
+        <button class="btn btn-next" onclick="nextStep(3)">Next: Payment Details ➔</button>
+        <button class="btn btn-back" onclick="nextStep(1)">Go Back</button>
     </div>
 
-    <button class="order-btn" onclick="sendToWhatsApp()">Send Order via WhatsApp 🛍️</button>
+    <div id="step3" class="step">
+        <h2>💳 Payment Details</h2>
+        <div class="payment-box">
+            <div class="row">
+                <span>Product (₹50 x <span id="dispQty">5</span>):</span>
+                <span>₹<span id="dispProdTotal">250</span></span>
+            </div>
+            <div class="row">
+                <span>Courier Charges:</span>
+                <span>₹<span id="dispCourier">60</span></span>
+            </div>
+            <div class="row total-row">
+                <span>Total Amount:</span>
+                <span>₹<span id="dispFinal">310</span></span>
+            </div>
+        </div>
+
+        <div class="note-box">
+            ⚠️ <b>Important Message:</b><br>
+            1 Pouch Is 50 Rs. Full box 1200. One box in 24 pcs... (1 pouch la 20 pillows).<br><br>
+            ❌ <b>NO CASH ON DELIVERY</b><br>
+            ✅ <b>ONLINE PAYMENT ONLY</b><br>
+            🚚 Delivery: 2 to 3 days.
+        </div>
+
+        <button class="btn btn-next" style="background:#25D366" onclick="sendWhatsApp()">Send Order to WhatsApp 🛍️</button>
+        <button class="btn btn-back" onclick="nextStep(2)">Back to Address</button>
+    </div>
+
 </div>
 
 <script>
-    const PRICE_PER_POUCH = 50;
+    const UNIT_PRICE = 50;
 
-    function updatePrice() {
-        let qty = parseInt(document.getElementById('quantity').value) || 0;
-        let state = document.getElementById('state').value;
+    function nextStep(stepNum) {
+        // Hide all steps
+        document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+        // Show current step
+        document.getElementById('step' + stepNum).classList.add('active');
+        if(stepNum === 3) calculate();
+    }
+
+    function calculate() {
+        let qty = parseInt(document.getElementById('quantity').value) || 5;
+        if(qty < 5) qty = 5; // Min 5 Pcs
         
+        let state = document.getElementById('state').value;
         let courier = (state === "Tamilnadu") ? 60 : 80;
-        let productTotal = qty * PRICE_PER_POUCH;
+        
+        let productTotal = qty * UNIT_PRICE;
         let finalAmount = productTotal + courier;
 
-        // Update UI
-        document.getElementById('qtyLabel').innerText = qty;
-        document.getElementById('prodTotal').innerText = productTotal;
-        document.getElementById('courierLabel').innerText = courier;
-        document.getElementById('finalTotal').innerText = finalAmount;
+        // Update Summary Page
+        document.getElementById('dispQty').innerText = qty;
+        document.getElementById('dispProdTotal').innerText = productTotal;
+        document.getElementById('dispCourier').innerText = courier;
+        document.getElementById('dispFinal').innerText = finalAmount;
 
         return { qty, courier, finalAmount };
     }
 
-    function sendToWhatsApp() {
+    function sendWhatsApp() {
         let name = document.getElementById('name').value;
         let address = document.getElementById('address').value;
         let landmark = document.getElementById('landmark').value;
         let pincode = document.getElementById('pincode').value;
         let state = document.getElementById('state').value;
         let mobile = document.getElementById('mobile').value;
-        let altMobile = document.getElementById('altMobile').value || "None";
+        let altMobile = document.getElementById('altMobile').value || "N/A";
         
-        let data = updatePrice();
-
-        if(name === "" || mobile === "") {
-            alert("தயவுசெய்து பெயர் மற்றும் மொபைல் எண்ணை உள்ளிடவும்!");
+        if(!name || !mobile || !address) {
+            alert("தயவுசெய்து அனைத்து விவரங்களையும் பூர்த்தி செய்யவும்!");
             return;
         }
+
+        let data = calculate();
 
         let message = "*New Order send!* 🛍️" + "%0A" +
                       "--------------------------" + "%0A%0A" +
