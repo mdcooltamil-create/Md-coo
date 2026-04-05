@@ -1,33 +1,99 @@
-<div class="tracking-container" style="text-align: center; margin: 20px 0; font-family: 'Segoe UI', sans-serif;">
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Md Shop - Order Form</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background-color: #f4f4f4; }
+        .container { max-width: 400px; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0px 0px 10px rgba(0,0,0,0.1); }
+        input, select, button { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
+        button { background-color: #25D366; color: white; border: none; cursor: pointer; font-weight: bold; }
+        .summary { background: #e7f3ff; padding: 10px; border-radius: 5px; font-size: 0.9em; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Md Shop Order Form</h2>
     
-    <div onclick="openSTTrack()" style="
-        background-color: white; 
-        color: #37474f; 
-        border: 6px solid #282828; 
-        border-radius: 40px; 
-        padding: 12px 20px; 
-        font-size: 22px; 
-        font-weight: bold; 
-        cursor: pointer;
-        display: inline-block;
-        width: 80%;
-        max-width: 340px;
-        text-decoration: none;
-        box-sizing: border-box;
-        transition: 0.3s;">
-        ST COURIER TRACKING
+    <input type="text" id="name" placeholder="Name" required>
+    <input type="text" id="address" placeholder="Address" required>
+    <input type="text" id="landmark" placeholder="Landmark" required>
+    <input type="number" id="pincode" placeholder="Pincode" required>
+    
+    <label>Select State:</label>
+    <select id="state" onchange="calculateTotal()">
+        <option value="Tamilnadu">Tamilnadu</option>
+        <option value="Other State">Other State</option>
+    </select>
+
+    <input type="tel" id="mobile" placeholder="Mobile Number" required>
+    <input type="tel" id="altMobile" placeholder="Alt Mobile Number">
+    
+    <label>Quantity:</label>
+    <input type="number" id="quantity" value="1" min="1" onchange="calculateTotal()">
+
+    <div class="summary">
+        <p>Product Price: ₹<span id="prodPriceDisplay">65</span></p>
+        <p>Courier Charge: ₹<span id="courierDisplay">60</span></p>
+        <p><strong>Total to Pay: ₹<span id="totalDisplay">125</span></strong></p>
     </div>
+
+    <button onclick="sendWhatsApp()">Send Order via WhatsApp 🛍️</button>
 </div>
 
 <script>
-function openSTTrack() {
-    // ஒரு சிறிய விண்டோ மூலம் நம்பரை கேட்கும்
-    var trackId = prompt("Enter ST Courier Tracking Number:");
-    
-    if (trackId != null && trackId.trim() !== "") {
-        // நம்பரை உள்ளிட்டவுடன் ST Courier தளத்திற்கு கூட்டிச் செல்லும்
-        var url = "https://stcourier.com/track/details?shipment_id=" + trackId.trim();
-        window.open(url, '_blank');
+    // உங்கள் தயாரிப்பின் விலை (ஒன்றின் விலை)
+    const UNIT_PRICE = 65; 
+
+    function calculateTotal() {
+        let state = document.getElementById('state').value;
+        let qty = parseInt(document.getElementById('quantity').value) || 1;
+        let courier = (state === "Tamilnadu") ? 60 : 80;
+        
+        let total = (UNIT_PRICE * qty) + courier;
+
+        // திரையில் காட்டுவதற்கு
+        document.getElementById('courierDisplay').innerText = courier;
+        document.getElementById('totalDisplay').innerText = total;
+        
+        return { courier, total, qty };
     }
-}
+
+    function sendWhatsApp() {
+        let name = document.getElementById('name').value;
+        let address = document.getElementById('address').value;
+        let landmark = document.getElementById('landmark').value;
+        let pincode = document.getElementById('pincode').value;
+        let state = document.getElementById('state').value;
+        let mobile = document.getElementById('mobile').value;
+        let altMobile = document.getElementById('altMobile').value || "N/A";
+        
+        // கணக்கீடுகளைப் பெறுதல்
+        let calc = calculateTotal();
+
+        // வாட்ஸ்அப் செய்தி வடிவம் (நீங்கள் கேட்ட படம் 2-ல் உள்ளது போல்)
+        let message = "*New Order send!* 🛍️" + "%0A" +
+                      "--------------------------" + "%0A%0A" +
+                      name + "%0A" +
+                      address + "%0A" +
+                      landmark + "%0A" +
+                      state + " - " + pincode + "%0A" +
+                      mobile + " , " + altMobile + "%0A" +
+                      "--------------------------" + "%0A" +
+                      "*PAYMENT DETAILS:*" + "%0A" +
+                      "*Quantity:* " + calc.qty + " pcs" + "%0A" +
+                      "*Total Paid:* ₹" + calc.total + " (Incl. Courier)" + "%0A" +
+                      "--------------------------" + "%0A%0A" +
+                      "*💯 நீங்கள் பணம் செலுத்தினால், நான் ஆர்டரை உறுதி செய்வேன் If ⭐ !*" + "%0A%0A" +
+                      "💯 *If you are paying, I will confirm the order.* ⭐" + "%0A%0A" +
+                      "Please wait confirm this order!";
+
+        let whatsappURL = "https://wa.me/919488934686?text=" + message;
+        window.open(whatsappURL, '_blank');
+    }
 </script>
+
+</body>
+</html>
