@@ -3,77 +3,118 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Md Shop - Order Form</title>
+    <title>Md Shop - Order Checkout</title>
     <style>
-        body { font-family: Arial, sans-serif; padding: 20px; background-color: #f4f4f4; }
-        .container { max-width: 400px; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0px 0px 10px rgba(0,0,0,0.1); }
-        input, select, button { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
-        button { background-color: #25D366; color: white; border: none; cursor: pointer; font-weight: bold; }
-        .summary { background: #e7f3ff; padding: 10px; border-radius: 5px; font-size: 0.9em; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8f9fa; display: flex; justify-content: center; padding: 20px; }
+        .checkout-card { width: 100%; max-width: 450px; background: white; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); padding: 20px; text-align: center; }
+        
+        .header-icon { width: 50px; margin-bottom: 10px; }
+        h2 { color: #333; margin-bottom: 20px; }
+
+        /* Payment Summary Box */
+        .payment-box { background: #fff; border: 1px solid #eee; border-radius: 15px; padding: 15px; margin-bottom: 20px; text-align: left; }
+        .row { display: flex; justify-content: space-between; margin: 8px 0; color: #555; }
+        .total-row { border-top: 1px solid #eee; padding-top: 10px; font-weight: bold; font-size: 1.2em; color: #000; }
+
+        /* Product Box */
+        .product-container { border: 2px solid #28a745; border-radius: 15px; padding: 15px; margin-bottom: 20px; }
+        .product-title { color: #28a745; font-weight: bold; margin-bottom: 10px; }
+        .product-img { width: 100%; border-radius: 10px; }
+
+        /* Important Note Box */
+        .note-box { border: 2px dashed #dc3545; border-radius: 15px; padding: 15px; background-color: #fff5f5; color: #856404; font-size: 0.9em; line-height: 1.6; }
+
+        /* Form Inputs */
+        input, select { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+        .order-btn { background-color: #25D366; color: white; border: none; padding: 15px; width: 100%; border-radius: 10px; font-size: 1.1em; font-weight: bold; cursor: pointer; margin-top: 20px; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h2>Md Shop Order Form</h2>
+<div class="checkout-card">
+    <img src="https://cdn-icons-png.flaticon.com/512/633/633611.png" class="header-icon" alt="card">
+    <h2>Payment Details</h2>
+
+    <div class="payment-box">
+        <div class="row">
+            <span>Product (₹50 x <span id="qtyLabel">1</span>):</span>
+            <span>₹<span id="prodTotal">50</span></span>
+        </div>
+        <div class="row">
+            <span>Courier Charges:</span>
+            <span>₹<span id="courierLabel">60</span></span>
+        </div>
+        <div class="total-row row">
+            <span>Total Amount:</span>
+            <span>₹<span id="finalTotal">110</span></span>
+        </div>
+    </div>
+
+    <input type="text" id="name" placeholder="Name">
+    <input type="text" id="address" placeholder="Address">
+    <input type="text" id="landmark" placeholder="Landmark">
+    <input type="number" id="pincode" placeholder="Pincode">
     
-    <input type="text" id="name" placeholder="Name" required>
-    <input type="text" id="address" placeholder="Address" required>
-    <input type="text" id="landmark" placeholder="Landmark" required>
-    <input type="number" id="pincode" placeholder="Pincode" required>
-    
-    <label>Select State:</label>
-    <select id="state" onchange="calculateTotal()">
+    <select id="state" onchange="updatePrice()">
         <option value="Tamilnadu">Tamilnadu</option>
         <option value="Other State">Other State</option>
     </select>
 
-    <input type="tel" id="mobile" placeholder="Mobile Number" required>
+    <input type="tel" id="mobile" placeholder="Mobile Number">
     <input type="tel" id="altMobile" placeholder="Alt Mobile Number">
     
-    <label>Quantity:</label>
-    <input type="number" id="quantity" value="1" min="1" onchange="calculateTotal()">
+    <label style="display:block; text-align:left; font-weight:bold; margin-top:10px;">Quantity:</label>
+    <input type="number" id="quantity" value="1" min="1" oninput="updatePrice()">
 
-    <div class="summary">
-        <p>Product Price: ₹<span id="prodPriceDisplay">65</span></p>
-        <p>Courier Charge: ₹<span id="courierDisplay">60</span></p>
-        <p><strong>Total to Pay: ₹<span id="totalDisplay">125</span></strong></p>
+    <div class="product-container">
+        <div class="product-title">MAR MOUTH CHILL:</div>
+        <img src="https://drive.google.com/file/d/1tN6yf9RvKK7ClMlFwKgq-m-WkhVQE_kt/view?usp=drivesdk" class="product-img" alt="MAR Mouth Chill">
     </div>
 
-    <button onclick="sendWhatsApp()">Send Order via WhatsApp 🛍️</button>
+    <div class="note-box">
+        ⚠️ <b>கவனிக்கவும், Important:</b> 1 Pouch Is 50 Rs. Minimum 5 Pcs order. Full box 1200. One box in 24 pcs... (1 pouch la 20 pillows) Available... 📦 💸 <br><br>
+        <b>NO CASH ON DELIVERY 💸 ONLINE PAYMENT ONLY</b> 🚚 Product dispatch date to Delivery 2 or 3 days.
+    </div>
+
+    <button class="order-btn" onclick="sendToWhatsApp()">Send Order via WhatsApp 🛍️</button>
 </div>
 
 <script>
-    // உங்கள் தயாரிப்பின் விலை (ஒன்றின் விலை)
-    const UNIT_PRICE = 65; 
+    const PRICE_PER_POUCH = 50;
 
-    function calculateTotal() {
+    function updatePrice() {
+        let qty = parseInt(document.getElementById('quantity').value) || 0;
         let state = document.getElementById('state').value;
-        let qty = parseInt(document.getElementById('quantity').value) || 1;
+        
         let courier = (state === "Tamilnadu") ? 60 : 80;
-        
-        let total = (UNIT_PRICE * qty) + courier;
+        let productTotal = qty * PRICE_PER_POUCH;
+        let finalAmount = productTotal + courier;
 
-        // திரையில் காட்டுவதற்கு
-        document.getElementById('courierDisplay').innerText = courier;
-        document.getElementById('totalDisplay').innerText = total;
-        
-        return { courier, total, qty };
+        // Update UI
+        document.getElementById('qtyLabel').innerText = qty;
+        document.getElementById('prodTotal').innerText = productTotal;
+        document.getElementById('courierLabel').innerText = courier;
+        document.getElementById('finalTotal').innerText = finalAmount;
+
+        return { qty, courier, finalAmount };
     }
 
-    function sendWhatsApp() {
+    function sendToWhatsApp() {
         let name = document.getElementById('name').value;
         let address = document.getElementById('address').value;
         let landmark = document.getElementById('landmark').value;
         let pincode = document.getElementById('pincode').value;
         let state = document.getElementById('state').value;
         let mobile = document.getElementById('mobile').value;
-        let altMobile = document.getElementById('altMobile').value || "N/A";
+        let altMobile = document.getElementById('altMobile').value || "None";
         
-        // கணக்கீடுகளைப் பெறுதல்
-        let calc = calculateTotal();
+        let data = updatePrice();
 
-        // வாட்ஸ்அப் செய்தி வடிவம் (நீங்கள் கேட்ட படம் 2-ல் உள்ளது போல்)
+        if(name === "" || mobile === "") {
+            alert("தயவுசெய்து பெயர் மற்றும் மொபைல் எண்ணை உள்ளிடவும்!");
+            return;
+        }
+
         let message = "*New Order send!* 🛍️" + "%0A" +
                       "--------------------------" + "%0A%0A" +
                       name + "%0A" +
@@ -83,15 +124,14 @@
                       mobile + " , " + altMobile + "%0A" +
                       "--------------------------" + "%0A" +
                       "*PAYMENT DETAILS:*" + "%0A" +
-                      "*Quantity:* " + calc.qty + " pcs" + "%0A" +
-                      "*Total Paid:* ₹" + calc.total + " (Incl. Courier)" + "%0A" +
+                      "*Quantity:* " + data.qty + " pcs" + "%0A" +
+                      "*Total Paid:* ₹" + data.finalAmount + " (Incl. Courier)" + "%0A" +
                       "--------------------------" + "%0A%0A" +
                       "*💯 நீங்கள் பணம் செலுத்தினால், நான் ஆர்டரை உறுதி செய்வேன் If ⭐ !*" + "%0A%0A" +
                       "💯 *If you are paying, I will confirm the order.* ⭐" + "%0A%0A" +
                       "Please wait confirm this order!";
 
-        let whatsappURL = "https://wa.me/919488934686?text=" + message;
-        window.open(whatsappURL, '_blank');
+        window.open("https://wa.me/919488934686?text=" + message, "_blank");
     }
 </script>
 
